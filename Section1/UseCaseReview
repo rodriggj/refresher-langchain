@@ -1,0 +1,83 @@
+# What is LangChain 
+
+## Example 
+- [ ] Reference this website [pdf.ai](https://pdf.ai/)
+
+If we were to recreate the app we have 2 high level options: 
+
+### Option 1: Take all text and send it to ChatGPT
+
+### Option 2: Take send relevant chunks to ChatGPT
+- [ ] Takes pdf content and parses into Chunks
+- [ ] Chunks get sent to an Embedding Creation Algorithm 
+- [ ] All embeddings are an Array of numbers between -1 and 1 representing the chunk
+- [ ] The Arrays are effectively text summaries the describe in multi-dimenstions what the chunk represents
+- [ ] Once the embeddings are created they are stored in a Vector Store
+- [ ] Now when a question is asked, the question is also turned into an embedding -- now we can look for a chunk of text that is most similar to our chunk
+- [ ] Now both the 1. question embedding & 2. the most similar chunk embedding coming from the vector store are both sent to the LLM via a prompt template
+- [ ] Now the LLM applies some inference on the question along with the most relevant chunk, which generally makes the LLM the list interesting portion 
+
+The LLM is effectively validating/or parroting back what it found from the chunk.
+
+----
+
+So in this example what is the point of LangChain? 
+
+- [ ] LangChain gives us a mechanism to automate each one of these steps into a flow that allows for each piece of this process to be executed in the order intended. 
+
+1. Use uploads pdf
+```python
+from langchain.document_loaders import UnstructuredPDFLoader
+
+loader = UnstructuedPDFLoader("earth.pdf")
+data = loader.load()
+print(data)
+```
+
+Other loader Classes that LangChain provides: 
+- [ ] UnstructuredPDFLoader
+- [ ] UnstructuredHTMLLoader
+- [ ] UnstructuredExcelLoader
+- [ ] PyPDFLoader
+- [ ] S3FileLoader
+- [ ] GithubIssuesLoader
+- [ ] JSONLoader
+- [ ] DiscordChatLoader
+- [ ] GoogleDriveLoader
+
+2. Open the pdf file and parse the content
+3. Break the content into chunks
+4. Figure out what each chunk is about (embeddings)
+5. Store results in a vector database (vectorstore)
+
+Multiple Vector Datastores (LangChain has classes to utilize these Vector Stores): 
+- [ ] PGVector 
+- [ ] DeepLake 
+- [ ] Pinecone 
+- [ ] Weaviate
+- [ ] Chroma
+- [ ] Redis   
+
+```python
+from langchain.vectorstore.redis import Redis
+
+rds = Redis.from_documents(
+    embeddings = embeddings,
+    documents  = docs,
+    redis_urs  = "redis://localhost:6379",
+    index_name = "earth"
+)
+
+query = "Where does the word earth come from?"
+docs = db.similarity_search(query)
+```
+
+6. Analyze the question sent by the user 
+7. Find the most relevant chunks using embeddings in the vector store
+8. Format the question + chunk into a prompt
+9. Send to ChatGPT get a response
+
+---- 
+
+# Goal 
+- [ ] The goal of LangChain is to provide _interchangable_ tools to automate each step of our intended outcome. 
